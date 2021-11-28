@@ -3,10 +3,8 @@ import pandas as pd
 import sklearn.preprocessing as preprocessing
 
 
-def preprocess_df(df):
+def preprocess_df(df, test=False):
     to_be_droped = ['CURRUPB', 'LID', 'REMMNTHS', 'OLTV', 'STATE', 'ZIP', 'PRODUCT', 'CURRRATE']
-    #     labeled = ['NMONTHS', 'FORCLOSED']
-    #     df_labeled = df[labeled[cate]]
     dummies = ['CHNL', 'PROP', 'PURPOSE', 'OCCSTAT', 'SELLER']
     df_dropped = df.drop(to_be_droped, axis=1)
 
@@ -19,7 +17,8 @@ def preprocess_df(df):
     df_dropped.FIRSTFLAG = df_dropped.FIRSTFLAG.map({'N': 0, 'Y': 1}, na_action='ignore').fillna(method='bfill')
     df_dropped.IO = df_dropped.IO.map({'N': 1}, na_action='ignore').fillna(0)
     df_dropped.MIPCT = df_dropped.MIPCT.fillna(0)
-    df_dropped.FORCLOSED = df_dropped.FORCLOSED.map({False: 0, True: 1})
+    if not test:
+        df_dropped.FORCLOSED = df_dropped.FORCLOSED.map({False: 0, True: 1})
 
     return pd.get_dummies(df_dropped, columns=dummies)
 
@@ -42,3 +41,10 @@ def pipeline(df):
     X = get_formatted_data(X)
 
     return X, Y
+
+
+def pipeline_test(df):
+    df = preprocess_df(df, True)
+    X = get_formatted_data(df)
+
+    return X
