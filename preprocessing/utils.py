@@ -1,9 +1,19 @@
+## author: hym97
+## date: 2021/11/27
+
 import numpy as np
 import pandas as pd
 import sklearn.preprocessing as preprocessing
 
 
 def preprocess_df(df, test=False):
+    '''
+    Used to drop columns, pad nans, and get dummies
+    :param df (pd.DataFrame): full_dataset(with labels)
+    :param test (bool): if it is test data set
+    :return:
+    df (pd.DataFrame): processed dataset
+    '''
     to_be_droped = ['CURRUPB', 'LID', 'REMMNTHS', 'OLTV', 'STATE', 'ZIP', 'PRODUCT', 'CURRRATE']
     dummies = ['CHNL', 'PROP', 'PURPOSE', 'OCCSTAT', 'SELLER']
     df_dropped = df.drop(to_be_droped, axis=1)
@@ -24,11 +34,22 @@ def preprocess_df(df, test=False):
 
 
 def get_labeled_data(df):
+    '''
+    split train and label
+    :param df (pd.DataFrame): full dataset
+    :return: train, labels
+    '''
     labels = ['NMONTHS', 'FORCLOSED']
     return df.drop(labels, axis=1), df[labels]
 
 
 def get_formatted_data(X):
+    '''
+    scale all data into [0,1]
+    :param X (pd.DataFrame): train data
+    :return:
+    X (numpy.ndarray)
+    '''
     sclaer = preprocessing.MinMaxScaler()
     X = np.c_[sclaer.fit_transform(X.iloc[:, :18]), X.iloc[:, 18:]]
 
@@ -36,6 +57,11 @@ def get_formatted_data(X):
 
 
 def pipeline(df):
+    '''
+    pipeline for training data set
+    :param df (pd.DataFrame): training dataset
+    :return: train (numpy.ndarray), labels(pd.DataFrame)
+    '''
     df = preprocess_df(df)
     X, Y = get_labeled_data(df)
     X = get_formatted_data(X)
@@ -44,6 +70,11 @@ def pipeline(df):
 
 
 def pipeline_test(df):
+    '''
+    pipeline for testing data set
+    :param df (pd.DataFrame): testing dataset
+    :return: test (numpy.ndarray)
+    '''
     df = preprocess_df(df, True)
     X = get_formatted_data(df)
 

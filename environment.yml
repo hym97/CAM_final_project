@@ -1,0 +1,4 @@
+name: CAMenv
+channels:
+  - defaults
+prefix: C:\Users\hymsh\anaconda3\envs\CAMenv\envs\CAMenv
